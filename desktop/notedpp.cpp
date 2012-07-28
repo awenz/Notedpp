@@ -19,12 +19,12 @@ void print_usage(void){
         << setw(20) << "\noptions: \n -n new note\n -l list notes\n -s search notes\n -d delete note by id\n";
 }
 
-void create_note(Note *note,sqlite3 *handle,string tmp){
+void create_note(Note *note,sqlite3 *handle,string tmp, char* db_path){
     string query_start="INSERT INTO notes (id,note) VALUES(NULL,'";
     string query_end="')";
     const char* sql;
     int retval;
-    retval = sqlite3_open("sampledb.sqlite",&handle);
+    retval = sqlite3_open(db_path,&handle);
     if(retval){
         cout << "Database connection failed!\n";
         exit(EXIT_FAILURE);
@@ -56,8 +56,8 @@ void create_table(sqlite3 *handle){
     }
 }
 
-void delete_note(char* note_id, string tmp, sqlite3 *handle){
-    int retval = sqlite3_open("sampledb.sqlite",&handle);
+void delete_note(char* note_id, string tmp, sqlite3 *handle, char* db_path){
+    int retval = sqlite3_open(db_path,&handle);
     const char* sql;
     if(retval){
         cout << "Database connection failed!\n";
@@ -77,10 +77,10 @@ void delete_note(char* note_id, string tmp, sqlite3 *handle){
     sqlite3_close(handle);
 }
 
-void list_notes(sqlite3 *handle, sqlite3_stmt *stmt){
+void list_notes(sqlite3 *handle, sqlite3_stmt *stmt,char* db_path){
     const char *select= "SELECT * from notes";
     int cols,col;
-    int retval = sqlite3_open("sampledb.sqlite",&handle);
+    int retval = sqlite3_open(db_path,&handle);
     if(retval){
         cout << "Database Connection failed!\n";
         exit(EXIT_FAILURE);
@@ -124,6 +124,11 @@ int main(int argc, char** argv){
     sqlite3_stmt *stmt;
     string tmp;
     string text;
+    const char* env = getenv("HOME");
+    const char* db = "/.noteddb.sqlite";
+    char* db_path = (char*)malloc(strlen(env)+strlen(db));
+    strcpy(db_path,env);
+    strcat(db_path,db);
     int i;
     for(i=2;i<argc;++i)
     {
@@ -147,15 +152,16 @@ int main(int argc, char** argv){
                 case 'n':
                     cout << "Creating Note ... \n";
                     note = new Note(text);
-                    create_note(note,handle,tmp);
+                    create_note(note,handle,tmp,db_path);
                     delete note;
                     break;
                 case 'l':
-                    list_notes(handle,stmt);
+                    list_notes(handle,stmt,db_path);
                     break;
                 case 'd':
-                    delete_note(argv[1],tmp,handle);
+                    delete_note(argv[1],tmp,handle,db_path);
                     break;
             }
+    free(db_path);
     return 0;
 }
