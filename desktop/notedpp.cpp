@@ -20,7 +20,7 @@ void print_usage(void){
 }
 
 void create_note(Note *note,sqlite3 *handle,string tmp, char* db_path){
-    string query_start="INSERT INTO notes (id,note) VALUES(NULL,'";
+    string query_start="INSERT INTO notes (_id,note) VALUES(NULL,'";
     string query_end="')";
     const char* sql;
     int retval;
@@ -48,7 +48,7 @@ void create_note(Note *note,sqlite3 *handle,string tmp, char* db_path){
 }
 
 void create_table(sqlite3 *handle){
-    char* create_table = "CREATE TABLE IF NOT EXISTS notes (id INTEGER PRIMARY KEY, note TEXT NOT NULL)";
+    char* create_table = "CREATE TABLE IF NOT EXISTS notes (_id INTEGER PRIMARY KEY, note TEXT NOT NULL)";
     int retval = sqlite3_exec(handle,create_table,0,0,0);
     if(retval){
         cout << "Table Creation Failed!\n";
@@ -63,7 +63,7 @@ void delete_note(char* note_id, string tmp, sqlite3 *handle, char* db_path){
         cout << "Database connection failed!\n";
         exit(EXIT_FAILURE);
     }
-    string del_start = "DELETE FROM notes WHERE id='";
+    string del_start = "DELETE FROM notes WHERE _id='";
     string del_end   = "'";
     tmp+=del_start;
     tmp+=note_id;
