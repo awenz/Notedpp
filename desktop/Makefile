@@ -1,6 +1,3 @@
-CFLAGS := -Wall -Wextra -pedantic -O2 -g -D_REENTRANT $(CFLAGS)
-LDFLAGS := -lsqlite3 -lm $(LDFLAGS)
-
 noted: notedpp.o note.o
 	g++ -o notedpp notedpp.o note.o -lsqlite3
 
