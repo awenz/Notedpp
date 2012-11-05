@@ -48,7 +48,7 @@ void create_note(Note *note,sqlite3 *handle,string tmp, char* db_path){
 }
 
 void create_table(sqlite3 *handle){
-    char* create_table = "CREATE TABLE IF NOT EXISTS notes (_id INTEGER PRIMARY KEY, note TEXT NOT NULL)";
+     const char* create_table = "CREATE TABLE IF NOT EXISTS notes (_id INTEGER PRIMARY KEY, note TEXT NOT NULL)";
     int retval = sqlite3_exec(handle,create_table,0,0,0);
     if(retval){
         cout << "Table Creation Failed!\n";
